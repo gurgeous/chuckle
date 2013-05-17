@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Adam Doppelt"]
   s.email       = ["amd@gurge.com"]
   s.homepage    = "http://github.com/gurgeous/chuckle"
-  s.summary     = "Chuckle - caching http client that wraps curl."
-  s.description = "A caching http client that wraps curl."
+  s.summary     = "Chuckle - an http client that caches on disk."
+  s.description = "An http client that caches on disk."
 
   s.rubyforge_project = "chuckle"
 
