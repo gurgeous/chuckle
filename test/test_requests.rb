@@ -1,9 +1,5 @@
 require "helper"
 
-#
-# these are mock tests, so they don't really run curl
-#
-
 class TestRequests < Minitest::Test
   include Helper
 

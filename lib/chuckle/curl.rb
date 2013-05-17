@@ -5,6 +5,7 @@ module Chuckle
   class Curl
     def initialize(request)
       @request = request
+      run
     end
 
     # tmp path for response headers

@@ -15,6 +15,15 @@ module Chuckle
       Response.new(request)
     end
 
+    def set(request, curl)
+      %w(body headers).each do |i|
+        src, dst = curl.send("#{i}_path"), request.send("#{i}_path")
+        FileUtils.mkdir_p(File.dirname(dst))
+        FileUtils.mv(src, dst)
+      end
+      Response.new(request)
+    end
+
     def clear(request)
       Util.rm_if_necessary(request.headers_path)
       Util.rm_if_necessary(request.body_path)
@@ -28,14 +37,6 @@ module Chuckle
       return false if @client.expires_in == :never
       return false if !exists?(request)
       File.stat(request.body_path).mtime + @client.expires_in < Time.now
-    end
-
-    def set(request, curl)
-      dirs = [ request.body_path, request.headers_path ].map { |i| File.dirname(i) }
-      FileUtils.mkdir_p(dirs)
-      FileUtils.mv(curl.headers_path, request.headers_path)
-      FileUtils.mv(curl.body_path, request.body_path)
-      Response.new(request)
     end
 
     def body_path(request)

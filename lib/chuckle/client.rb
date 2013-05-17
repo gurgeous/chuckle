@@ -9,6 +9,7 @@ module Chuckle
     def initialize(options = {})
       self.options = options
       self.cache = Cache.new(self)
+      sanity!
     end
 
     #
@@ -16,7 +17,8 @@ module Chuckle
     #
 
     def create_request(uri, body = nil)
-      Request.new(self, to_uri(uri), body)
+      uri = URI.parse(uri.to_s) if !uri.is_a?(URI)
+      Request.new(self, uri, body)
     end
 
     def get(uri)
@@ -39,38 +41,30 @@ module Chuckle
 
     protected
 
+    # make sure curl command exists
+    def sanity!
+      system("which curl > /dev/null")
+      raise "Chuckle requires curl. Please install it." if $? != 0
+    end
+
     def curl(request)
       vputs request.uri
       rate_limit!(request)
-      curl = Curl.new(request)
-      curl.run
-      cache.set(request, curl)
+      cache.set(request, Curl.new(request))
     end
 
     def raise_errors(response)
       # raise errors if necessary
       if response.curl_exit_code
-        e = Error.new("Chuckle::Error, curl exit code #{response.curl_exit_code}")
-        e.response = response
-        raise e
+        raise Error.new("Chuckle::Error, curl exit code #{response.curl_exit_code}", response)
       end
       if response.code >= 400
-        e = Error.new("Chuckle::Error, http status #{response.code}")
-        e.response = response
-        raise e
+        raise Error.new("Chuckle::Error, http status #{response.code}", response)
       end
     end
 
     def vputs(s)
       puts "chuckle: #{s}" if verbose?
-    end
-
-    # convert s into a URI if necessary
-    def to_uri(s)
-      if !s.is_a?(URI)
-        s = URI.parse(s.to_s)
-      end
-      s
     end
 
     def rate_limit!(request)
