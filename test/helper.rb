@@ -5,14 +5,61 @@ require "minitest/pride"
 
 module Helper
   CACHE_DIR = "/tmp/_chuckle_tests"
+  URL = "http://chuckle"
+
+  #
+  # fake responses
+  #
+
+  HTTP_200 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 200 OK
+
+    hello
+  EOF
+
+  HTTP_200_ALTERNATE = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 200 OK
+
+    alternate
+  EOF
+
+  HTTP_302 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 302 FOUND
+    Location: http://one
+
+    HTTP/1.0 200 OK
+
+    hello
+  EOF
+
+  HTTP_302_2 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 302 FOUND
+    Location: http://one
+
+    HTTP/1.1 302 FOUND
+    Location: http://two
+
+    HTTP/1.0 200 OK
+
+    hello
+  EOF
+
+  HTTP_404 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 404 Not Found
+
+  EOF
 
   def setup
+    # clear the cache before each test
     FileUtils.rm_rf(CACHE_DIR)
   end
 
-  def chuckle(options = {})
-    options = options.merge(cache_dir: CACHE_DIR)
-    Chuckle::Client.new(options)
+  # create a new client, with options
+  def client(options = {})
+    @client ||= begin
+      options = options.merge(cache_dir: CACHE_DIR)
+      Chuckle::Client.new(options)
+    end
   end
 
   # pretend to be curl by stubbing Kernel.system
@@ -32,6 +79,13 @@ module Helper
     end
 
     # stub out Kernel.system
+    Kernel.stub(:system, fake_system) { yield }
+  end
+
+  def assert_if_system(&block)
+    fake_system = lambda do |*command|
+      assert false, "system called with #{command.inspect}"
+    end
     Kernel.stub(:system, fake_system) { yield }
   end
 end

@@ -1,22 +1,26 @@
 module Chuckle
   class Request
-    attr_accessor :chuckle, :uri, :body
+    attr_accessor :client, :uri, :body
 
-    def initialize(chuckle, uri, body = nil)
-      self.chuckle = chuckle
+    def initialize(client, uri, body = nil)
+      self.client = client
       self.uri = uri
       self.body = body
     end
 
-    def headers
-      @headers ||= begin
-        dir, base = File.dirname(cache), File.basename(cache)
+    def headers_path
+      @headers_path ||= begin
+        dir, base = File.dirname(body_path), File.basename(body_path)
         "#{dir}/head/#{base}"
       end
     end
 
-    def cache
-      chuckle.cache_path(uri, body)
+    def body_path
+      @body_path ||= client.cache.body_path(self)
+    end
+
+    def to_s #:nodoc:
+      inspect
     end
 
     def inspect #:nodoc:

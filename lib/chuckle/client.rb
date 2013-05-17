@@ -2,25 +2,35 @@ require "fileutils"
 
 module Chuckle
   class Client
-    include Chuckle::Caching
     include Chuckle::Options
 
-    attr_accessor :options
+    attr_accessor :options, :cache
 
     def initialize(options = {})
-      @options = options
+      self.options = options
+      self.cache = Cache.new(self)
     end
 
     #
     # main entry points
     #
 
+    def create_request(uri, body = nil)
+      Request.new(self, to_uri(uri), body)
+    end
+
     def get(uri)
-      run(Request.new(self, to_uri(uri)))
+      run(create_request(uri))
     end
 
     def post(uri, body)
-      run(Request.new(self, to_uri(uri), body))
+      run(create_request(uri, body))
+    end
+
+    def run(request)
+      response = cache.get(request) || curl(request)
+      raise_errors(response)
+      response
     end
 
     def inspect #:nodoc:
@@ -29,80 +39,26 @@ module Chuckle
 
     protected
 
-    def run(request)
-      rm_if_stale(request)
-      curl(request) if !File.exists?(request.cache)
-      parse(request)
-    end
-
-    # remove cached request if stale
-    def rm_if_stale(request)
-      if stale?(request.cache)
-        Util.rm_if_necessary(request.cache)
-        Util.rm_if_necessary(request.headers)
-      end
-    end
-
     def curl(request)
       vputs request.uri
       rate_limit!(request)
-
-      # mkdirs
-      dirs = [ request.cache, request.headers, cookie_jar ].compact.map { |i| File.dirname(i) }
-      FileUtils.mkdir_p(dirs)
-
-      # curl!
-      curl = Curl.new(self, request)
+      curl = Curl.new(request)
       curl.run
-
-      #
-      # now atomically mv tmp files into cache
-      #
-
-      FileUtils.mv(curl.tmp_body, request.cache)
-      FileUtils.mv(curl.tmp_headers, request.headers)
+      cache.set(request, curl)
     end
 
-    # read cache and create response
-    def parse(request)
-      response = Response.new(self, request)
-      response.uri = request.uri
-
-      # headers
-      headers = IO.read(request.headers)
-
-      # exit_code?
-      if curl_exit_code = headers[/^exit_code (\d+)/, 1]
-        curl_exit_code = curl_exit_code.to_i
-        e = Error.new("chuckle failed, curl_exit_code=#{curl_exit_code}")
-        e.request = request
-        e.curl_exit_code = curl_exit_code
-        raise e
-      end
-
-      # get final status code
-      codes = headers.scan(/^HTTP\/\d\.\d (\d+).*?\r\n\r\n/m).flatten
-      codes = codes.map(&:to_i)
-      response.code = codes.last
-
-      # get final location
-      locations = headers.scan(/^Location: ([^\r\n]+)/m).flatten
-      if !locations.empty?
-        location = locations.last
-        # some buggy servers do this. sigh.
-        location = location.gsub(" ", "%20")
-        response.uri = URI.parse(location)
-      end
-
-      # throw HTTP errors if necessary
-      if response.code >= 400
-        e = Error.new("chuckle failed, http status=#{response.code}")
-        e.request = request
+    def raise_errors(response)
+      # raise errors if necessary
+      if response.curl_exit_code
+        e = Error.new("Chuckle::Error, curl exit code #{response.curl_exit_code}")
         e.response = response
         raise e
       end
-
-      response
+      if response.code >= 400
+        e = Error.new("Chuckle::Error, http status #{response.code}")
+        e.response = response
+        raise e
+      end
     end
 
     def vputs(s)

@@ -1,4 +1,4 @@
-require "chuckle/caching"
+require "chuckle/cache"
 require "chuckle/error"
 require "chuckle/options"
 require "chuckle/request"

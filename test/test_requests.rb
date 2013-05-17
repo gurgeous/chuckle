@@ -8,60 +8,30 @@ class TestRequests < Minitest::Test
   include Helper
 
   def test_200
-    response = with_mock_curl(<<EOF) do
-HTTP/1.1 200 OK
-
-gub
-EOF
-      chuckle.get("http://mock")
-    end
+    response = with_mock_curl(HTTP_200) { client.get(URL) }
     assert_equal 200, response.code
-    assert_equal URI.parse("http://mock"), response.uri
-    assert_equal "gub\n", response.body
+    assert_equal URI.parse(URL), response.uri
+    assert_equal "hello\n", response.body
   end
 
-  def test_30x
-    response = with_mock_curl(<<EOF) do
-HTTP/1.1 302 FOUND
-Location: http://one
-
-HTTP/1.0 200 OK
-
-gub
-EOF
-      chuckle.get("http://mock")
-    end
+  def test_302
+    response = with_mock_curl(HTTP_302) { client.get(URL) }
     assert_equal 200, response.code
     assert_equal URI.parse("http://one"), response.uri
-    assert_equal "gub\n", response.body
+    assert_equal "hello\n", response.body
   end
 
-  def test_30x_twice
-    response = with_mock_curl(<<EOF) do
-HTTP/1.1 302 FOUND
-Location: http://one
-
-HTTP/1.1 302 FOUND
-Location: http://two
-
-HTTP/1.0 200 OK
-
-gub
-EOF
-      chuckle.get("http://mock")
-    end
+  def test_302_2
+    response = with_mock_curl(HTTP_302_2) { client.get(URL) }
     assert_equal 200, response.code
     assert_equal URI.parse("http://two"), response.uri
-    assert_equal "gub\n", response.body
+    assert_equal "hello\n", response.body
   end
 
   def test_404
     e = assert_raises Chuckle::Error do
-      with_mock_curl(<<EOF) do
-HTTP/1.1 404 Not Found
-
-EOF
-        chuckle.get("http://mock")
+      with_mock_curl(HTTP_404) do
+        client.get(URL)
       end
     end
     assert_equal 404, e.response.code
@@ -69,11 +39,8 @@ EOF
 
   def test_timeout
     e = assert_raises Chuckle::Error do
-      with_mock_curl(<<EOF, Chuckle::Error::CURL_TIMEOUT) do
-HTTP/1.1 404 Not Found
-
-EOF
-        chuckle.get("http://mock")
+      with_mock_curl(HTTP_404, Chuckle::Error::CURL_TIMEOUT) do
+        client.get(URL)
       end
     end
     assert e.timeout?, "exception didn't indicate timeout"

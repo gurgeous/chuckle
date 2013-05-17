@@ -11,14 +11,14 @@ module Chuckle
       @rate_limit ||= options[:rate_limit] || 1
     end
 
-    # number of days to cache responses and cookies, or :infinite
+    # number of seconds to cache responses and cookies, or :never
     def expires_in
-      @expires_in ||= options[:expires_in] || :infinite
+      @expires_in ||= options[:expires_in] || :never
     end
 
     # number of retries to attempt
     def nretries
-      @nretries ||= options[:nretries] || 3
+      @nretries ||= options[:nretries] || 2
     end
 
     # timeout per retry
@@ -51,8 +51,8 @@ module Chuckle
     def cookie_jar
       if !defined?(@cookie_jar)
         if dir = options[:cookie_jar]
-          # Handle relative or absolute paths.  Relative paths are
-          # interpreted to be relative to the @root.
+          # Handle relative or absolute paths. Relative paths are
+          # relative to cache_dir
           dir = File.expand_path(dir, cache_dir)
         end
         @cookie_jar = dir
