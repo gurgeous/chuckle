@@ -3,6 +3,8 @@ require "ostruct"
 
 module Chuckle
   class Curl
+    COOKIE_JAR = "_chuckle_cookies.txt"
+
     def initialize(request)
       @request = request
       run
@@ -16,34 +18,6 @@ module Chuckle
     # tmp path for response body
     def body_path
       @body_path ||= Util.tmp_path
-    end
-
-    # the command line for this request, based on the request and the
-    # options from client
-    def command(request)
-      client = request.client
-      command = ["curl"]
-      command << "--silent"
-      command << "--compressed"
-      command += [ "--user-agent", client.user_agent]
-      command += ["--max-time", client.timeout]
-      command += ["--retry", client.nretries]
-      command += ["--location", "--max-redirs", 3]
-      if request.body
-        command += ["--data-binary", request.body]
-        command += ["--header", "Content-Type: application/x-www-form-urlencoded"]
-      end
-      if client.cookie_jar
-        FileUtils.mkdir_p(File.dirname(cookie_jar))
-        command += ["--cookie", client.cookie_jar]     # Read cookies from file
-        command += ["--cookie-jar", client.cookie_jar] # Write cookies to file
-      end
-      command += ["--dump-header", headers_path]
-      command += ["--output", body_path]
-      command << request.uri
-
-      command = command.map(&:to_s)
-      command
     end
 
     def run
@@ -73,6 +47,58 @@ module Chuckle
     def self.exit_code_from_headers(headers)
       if exit_code = headers[/^exit_code (\d+)/, 1]
         exit_code.to_i
+      end
+    end
+
+    protected
+
+    # the command line for this request, based on the request and the
+    # options from client
+    def command(request)
+      client = request.client
+
+      command = ["curl"]
+      command << "--silent"
+      command << "--compressed"
+
+      command += [ "--user-agent", client.user_agent]
+      command += ["--max-time", client.timeout]
+      command += ["--retry", client.nretries]
+      command += ["--location", "--max-redirs", 3]
+
+      if request.body
+        command += ["--data-binary", request.body]
+        command += ["--header", "Content-Type: application/x-www-form-urlencoded"]
+      end
+
+      if client.cookies?
+        command += ["--cookie", cookie_jar]
+        command += ["--cookie-jar", cookie_jar]
+      end
+
+      command += ["--dump-header", headers_path]
+      command += ["--output", body_path]
+
+      command << request.uri
+
+      command = command.map(&:to_s)
+      command
+    end
+
+    # the cookie jar is stored in the cache, kinda like a bogus
+    # request
+    def cookie_jar_bogus_request
+      uri = @request.uri + "/#{COOKIE_JAR}"
+      Request.new(@request.client, uri)
+    end
+
+    def cookie_jar
+      @cookie_jar ||= begin
+        # it expires just like other cache files
+        request = cookie_jar_bogus_request
+        request.client.cache.expired?(request)
+        FileUtils.mkdir_p(File.dirname(request.body_path))
+        request.body_path
       end
     end
   end

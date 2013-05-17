@@ -7,7 +7,7 @@ class TestCache < Minitest::Test
     client(expires_in: 10)
   end
 
-  # exists? and stale? (and clear)
+  # exists? and expired? (and clear)
   def test_predicates
     request = client.create_request(URL)
     assert !client.cache.exists?(request), "uncache! uri said it was cached"
@@ -16,7 +16,7 @@ class TestCache < Minitest::Test
       client.run(request)
     end
     assert client.cache.exists?(request), "cache said it wasn't cached"
-    assert !client.cache.stale?(request), "cache said it was stale"
+    assert !client.cache.expired?(request), "cache said it was expired"
 
     client.cache.clear(request)
     assert !client.cache.exists?(request), "still cached after clear"
@@ -34,7 +34,7 @@ class TestCache < Minitest::Test
     tm = Time.now - (client.expires_in + 9999)
     path = request.body_path
     File.utime(tm, tm, path)
-    assert client.cache.stale?(request), "#{path} was supposed to be stale"
+    assert client.cache.expired?(request), "#{path} was supposed to be expired"
 
     # make sure we get the new body
     response = with_mock_curl(HTTP_200_ALTERNATE) do

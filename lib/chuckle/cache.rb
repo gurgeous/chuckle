@@ -5,13 +5,7 @@ module Chuckle
     end
 
     def get(request)
-      if !exists?(request)
-        return nil
-      end
-      if stale?(request)
-        clear(request)
-        return nil
-      end
+      return nil if !exists?(request) || expired?(request)
       Response.new(request)
     end
 
@@ -33,10 +27,13 @@ module Chuckle
       File.exists?(request.body_path)
     end
 
-    def stale?(request)
+    def expired?(request)
       return false if @client.expires_in == :never
       return false if !exists?(request)
-      File.stat(request.body_path).mtime + @client.expires_in < Time.now
+      if File.stat(request.body_path).mtime + @client.expires_in < Time.now
+        clear(request)
+        true
+      end
     end
 
     def body_path(request)

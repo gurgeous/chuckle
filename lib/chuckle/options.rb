@@ -2,6 +2,10 @@ module Chuckle
   module Options
     IE9 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0"
 
+    def cookies?
+      options[:cookies]
+    end
+
     def verbose?
       options[:verbose]
     end
@@ -45,19 +49,6 @@ module Chuckle
         dir ||= "/tmp/chuckle"
         dir
       end
-    end
-
-    # cookie jar file
-    def cookie_jar
-      if !defined?(@cookie_jar)
-        if dir = options[:cookie_jar]
-          # Handle relative or absolute paths. Relative paths are
-          # relative to cache_dir
-          dir = File.expand_path(dir, cache_dir)
-        end
-        @cookie_jar = dir
-      end
-      @cookie_jar
     end
   end
 end

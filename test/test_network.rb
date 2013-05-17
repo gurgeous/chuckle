@@ -24,4 +24,32 @@ class TestNetwork < Minitest::Test
     response = client.post("http://httpbin.org/post", QUERY)
     assert_equal JSON.parse(response.body)["form"], QUERY
   end
+
+  def test_cookies
+    cookies = { "a" => "b" }
+
+    client(cookies: true, expires_in: 60) # set options
+
+    request = client.create_request("http://httpbin.org/get")
+    cookie_jar = Chuckle::Curl.new(request).send(:cookie_jar_bogus_request).body_path
+
+    # make sure there are no cookies after the GET
+    client.run(request)
+    assert !File.exists?(cookie_jar), "cookie jar shouldn't exist yet"
+
+    # make sure there ARE cookies after a Set-Cookie
+    client.get("http://httpbin.org/cookies/set?#{Chuckle::Util.hash_to_query(cookies)}")
+    assert File.exists?(cookie_jar), "cookie jar SHOULD exist now"
+
+    # make sure cookies come back from the server
+    response = client.get("http://httpbin.org/cookies")
+    assert_equal JSON.parse(response.body)["cookies"], cookies
+
+    # finally, test cache expiry on cookie_jar
+    tm = Time.now - (client.expires_in + 9999)
+    File.utime(tm, tm, cookie_jar)
+    # note: this has to be an un-cached URL
+    client.get("http://httpbin.org/robots.txt")
+    assert !File.exists?(cookie_jar), "cookie jar should've expired"
+  end
 end
