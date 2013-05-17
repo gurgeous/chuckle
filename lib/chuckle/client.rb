@@ -7,7 +7,7 @@ module Chuckle
     attr_accessor :options, :cache
 
     def initialize(options = {})
-      self.options = options
+      self.options = DEFAULT_OPTIONS.merge(options)
       self.cache = Cache.new(self)
       sanity!
     end
@@ -61,12 +61,17 @@ module Chuckle
 
     def raise_errors(response)
       # raise errors if necessary
-      if response.curl_exit_code
-        raise Error.new("Chuckle::Error, curl exit code #{response.curl_exit_code}", response)
+      error = if response.curl_exit_code
+        "curl exit code #{response.curl_exit_code}"
+      elsif response.code >= 400
+        "http status #{response.code}"
       end
-      if response.code >= 400
-        raise Error.new("Chuckle::Error, http status #{response.code}", response)
+      return if !error
+
+      if !cache_errors?
+        cache.clear(response.request)
       end
+      raise Error.new("#{Error.class}, #{error}", response)
     end
 
     def vputs(s)

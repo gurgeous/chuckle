@@ -12,7 +12,7 @@ class TestCache < Minitest::Test
     request = client.create_request(URL)
     assert !client.cache.exists?(request), "uncache! uri said it was cached"
 
-    with_mock_curl(HTTP_200) do
+    mcurl(HTTP_200) do
       client.run(request)
     end
     assert client.cache.exists?(request), "cache said it wasn't cached"
@@ -25,7 +25,7 @@ class TestCache < Minitest::Test
   # cache expiration
   def test_expiry
     request = client.create_request(URL)
-    response = with_mock_curl(HTTP_200) do
+    response = mcurl(HTTP_200) do
       client.run(request)
     end
     assert_equal "hello\n", response.body
@@ -37,10 +37,11 @@ class TestCache < Minitest::Test
     assert client.cache.expired?(request), "#{path} was supposed to be expired"
 
     # make sure we get the new body
-    response = with_mock_curl(HTTP_200_ALTERNATE) do
+    response = mcurl(HTTP_200_ALTERNATE) do
       client.run(request)
     end
     assert_equal "alternate\n", response.body
+    assert_equal 2, client.cache.misses
   end
 
   #
@@ -49,7 +50,7 @@ class TestCache < Minitest::Test
 
   def test_200
     # cache miss
-    with_mock_curl(HTTP_200) do
+    mcurl(HTTP_200) do
       client.get(URL)
     end
 
@@ -60,12 +61,14 @@ class TestCache < Minitest::Test
     assert_equal 200, response.code
     assert_equal URI.parse(URL), response.uri
     assert_equal "hello\n", response.body
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
   end
 
   def test_404
     # cache miss
     begin
-      with_mock_curl(HTTP_404) do
+      mcurl(HTTP_404) do
         client.get(URL)
       end
     rescue Chuckle::Error => e
@@ -78,12 +81,14 @@ class TestCache < Minitest::Test
       end
     end
     assert_equal 404, e.response.code
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
   end
 
   def test_timeout
     # cache miss
     begin
-      with_mock_curl(HTTP_404, Chuckle::Error::CURL_TIMEOUT) do
+      mcurl(HTTP_404, Chuckle::Error::CURL_TIMEOUT) do
         client.get(URL)
       end
     rescue Chuckle::Error => e
@@ -96,11 +101,13 @@ class TestCache < Minitest::Test
       end
     end
     assert e.timeout?, "exception didn't indicate timeout"
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
   end
 
   def test_post
     # cache miss
-    with_mock_curl(HTTP_200) do
+    mcurl(HTTP_200) do
       client.post(URL, QUERY)
     end
 
@@ -111,6 +118,8 @@ class TestCache < Minitest::Test
     assert_equal 200, response.code
     assert_equal URI.parse(URL), response.uri
     assert_equal "hello\n", response.body
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
   end
 
   def test_long_url
@@ -119,7 +128,7 @@ class TestCache < Minitest::Test
     query = query.each_slice(2).map { |i| i.join("=") }.join("&")
 
     # cache miss
-    with_mock_curl(HTTP_200) do
+    mcurl(HTTP_200) do
       client.post(URL, query)
     end
 
@@ -133,13 +142,15 @@ class TestCache < Minitest::Test
     assert_equal 200, response.code
     assert_equal URI.parse(URL), response.uri
     assert_equal "hello\n", response.body
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
   end
 
   def test_query
     url = "#{URL}?abc=def"
 
     # cache miss
-    with_mock_curl(HTTP_200) do
+    mcurl(HTTP_200) do
       client.get(url)
     end
 
@@ -153,6 +164,21 @@ class TestCache < Minitest::Test
     assert_equal 200, response.code
     assert_equal URI.parse(url), response.uri
     assert_equal "hello\n", response.body
+    assert_equal 1, client.cache.hits
+    assert_equal 1, client.cache.misses
+  end
 
+  def test_nocache_errors
+    # turn off error caching
+    client = Chuckle::Client.new(cache_dir: CACHE_DIR, expires_in: 10, cache_errors: false)
+
+    # cache misses
+    2.times do
+      begin
+        mcurl(HTTP_404) { client.get(URL) }
+      rescue Chuckle::Error => e
+      end
+    end
+    assert_equal 2, client.cache.misses
   end
 end

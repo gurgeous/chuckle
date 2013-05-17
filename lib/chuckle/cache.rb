@@ -2,12 +2,20 @@ require "fileutils"
 
 module Chuckle
   class Cache
+    attr_accessor :hits, :misses
+
     def initialize(client)
       @client = client
+
+      self.hits = self.misses = 0
     end
 
     def get(request)
-      return nil if !exists?(request) || expired?(request)
+      if !exists?(request) || expired?(request)
+        self.misses += 1
+        return
+      end
+      self.hits += 1
       Response.new(request)
     end
 

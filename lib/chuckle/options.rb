@@ -1,39 +1,16 @@
 module Chuckle
   module Options
-    IE9 = "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0"
-
-    def cookies?
-      options[:cookies]
-    end
-
-    def verbose?
-      options[:verbose]
-    end
-
-    # number of seconds between requests
-    def rate_limit
-      @rate_limit ||= options[:rate_limit] || 1
-    end
-
-    # number of seconds to cache responses and cookies, or :never
-    def expires_in
-      @expires_in ||= options[:expires_in] || :never
-    end
-
-    # number of retries to attempt
-    def nretries
-      @nretries ||= options[:nretries] || 2
-    end
-
-    # timeout per retry
-    def timeout
-      @timeout ||= options[:timeout] || 30
-    end
-
-    # user agent
-    def user_agent
-      @user_agent ||= options[:user_agent] || IE9
-    end
+    DEFAULT_OPTIONS = {
+      cache_dir: nil,
+      cache_errors: true,
+      cookies: false,
+      expires_in: :never,
+      nretries: 2,
+      rate_limit: 1,
+      timeout: 30,
+      user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0",
+      verbose: false,
+    }
 
     # cache root directory
     def cache_dir
@@ -49,6 +26,46 @@ module Chuckle
         dir ||= "/tmp/chuckle"
         dir
       end
+    end
+
+    # should errors be cached?
+    def cache_errors?
+      options[:cache_errors]
+    end
+
+    # are cookies enabled?
+    def cookies?
+      options[:cookies]
+    end
+
+    # number of seconds to cache responses and cookies, or :never
+    def expires_in
+      options[:expires_in]
+    end
+
+    # number of retries to attempt
+    def nretries
+      options[:nretries]
+    end
+
+    # number of seconds between requests
+    def rate_limit
+      options[:rate_limit]
+    end
+
+    # timeout per retry
+    def timeout
+      options[:timeout]
+    end
+
+    # user agent
+    def user_agent
+      options[:user_agent]
+    end
+
+    # verbose output?
+    def verbose?
+      options[:verbose]
     end
   end
 end

@@ -65,7 +65,7 @@ module Helper
   end
 
   # pretend to be curl by stubbing Kernel.system
-  def with_mock_curl(response, exit_code = 0, &block)
+  def mcurl(response, exit_code = 0, &block)
     # divide response into headers/body
     sep = response.rindex("\n\n") + "\n\n".length
     body = response[sep..-1]
