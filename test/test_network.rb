@@ -4,7 +4,7 @@ require "helper"
 class TestNetwork < Minitest::Test
   include Helper
 
-  def setup
+  def after_setup
     skip if !ENV["NETWORK"]
   end
 

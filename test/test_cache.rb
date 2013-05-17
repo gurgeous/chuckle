@@ -3,10 +3,12 @@ require "helper"
 class TestCache < Minitest::Test
   include Helper
 
+  def after_setup
+    client(expires_in: 10)
+  end
+
   # cached? and uncache!
   def test_predicates
-    client(expires_in: 10) # set options
-
     request = client.create_request(URL)
     assert !client.cache.exists?(request), "uncache! uri said it was cached"
 
@@ -22,8 +24,6 @@ class TestCache < Minitest::Test
 
   # cache expiration
   def test_expiry
-    client(expires_in: 10) # set options
-
     request = client.create_request(URL)
     response = with_mock_curl(HTTP_200) do
       client.run(request)
