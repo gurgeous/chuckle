@@ -26,6 +26,12 @@ module Chuckle
     end
 
     def post(uri, body)
+      body = case body
+      when Hash
+        Util.hash_to_query(body)
+      else
+        body.to_s
+      end
       run(create_request(uri, body))
     end
 

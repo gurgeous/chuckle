@@ -1,11 +1,13 @@
 require "awesome_print"
 require "chuckle"
+require "json"
 require "minitest/autorun"
 require "minitest/pride"
 
 module Helper
   CACHE_DIR = "/tmp/_chuckle_tests"
   URL = "http://chuckle"
+  QUERY = { "b" => "12", "a" => "34", "x y" => "56" }
 
   #
   # fake responses

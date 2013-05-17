@@ -19,4 +19,9 @@ class TestNetwork < Minitest::Test
     end
     assert e.timeout?, "exception didn't indicate timeout"
   end
+
+  def test_post
+    response = client.post("http://httpbin.org/post", QUERY)
+    assert_equal JSON.parse(response.body)["form"], QUERY
+  end
 end

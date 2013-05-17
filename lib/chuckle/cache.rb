@@ -48,10 +48,10 @@ module Chuckle
       s = "#{s}/#{pathify(uri.path)}"
       if uri.query
         q = "?#{uri.query}"
-        body_path = "#{s}#{pathify(q)}"
+        s = "#{s}#{pathify(q)}"
       end
       if body = request.body
-        body_path = "#{s},#{pathify(body)}"
+        s = "#{s},#{pathify(body)}"
       end
 
       # shorten long paths to md5 checksum
