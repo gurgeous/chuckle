@@ -41,7 +41,20 @@ p client.get("http://www.google.com")
 
 ## Options
 
-Not documented yet - see `Chuckle::Options`.
+Pass these `Chuckle::Client.new`:
+
+* **cache_dir** (~/.chuckle) - where chuckle should cache files. If HOME doesn't exist or isn't writable, it'll use `/tmp/chuckle` instead
+* **cache_errors** (true) - false to not cache errors on disk (timeouts, http status >= 400, etc.)
+* **cookies** (false) - true to turn on cookie support
+* **expires_in** (:never) - time in seconds after which cache files should expire, or `:never` to never expire
+* **nretries** (2) - number of times to retry a failing request
+* **rate_limit** (1) - number of seconds between requests
+* **timeout** (30) - timeout per request. Note that if `nretries` is 2 and `timeout` is 30, a failing request could take 90 seconds to truly fail.
+* **user_agent** - the user agent. Defaults to the IE9 user agent.
+* **verbose** (false) - if true, prints each request before fetching. Only prints network requests.
+
+
+
 
 ## Limitations
 
