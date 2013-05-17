@@ -72,22 +72,29 @@ module Chuckle
       headers = IO.read(request.headers)
 
       # exit_code?
-      if exit_code = headers[/^exit_code (\d+)/, 1]
-        e = Error.new("chuckle failed, curl exit_code=#{exit_code}")
+      if curl_exit_code = headers[/^exit_code (\d+)/, 1]
+        curl_exit_code = curl_exit_code.to_i
+        e = Error.new("chuckle failed, curl_exit_code=#{curl_exit_code}")
         e.request = request
-        e.exit_code = exit_code
+        e.curl_exit_code = curl_exit_code
         raise e
       end
 
-      # get the final response
-      headers = headers.scan(/^HTTP\/\d\.\d \d+.*?\r\n\r\n/m).last
-      response.code = headers[/^HTTP\/\d\.\d (\d+)/, 1].to_i
-      if location = headers[/^Location: ([^\r\n]+)/, 1]
+      # get final status code
+      codes = headers.scan(/^HTTP\/\d\.\d (\d+).*?\r\n\r\n/m).flatten
+      codes = codes.map(&:to_i)
+      response.code = codes.last
+
+      # get final location
+      locations = headers.scan(/^Location: ([^\r\n]+)/m).flatten
+      if !locations.empty?
+        location = locations.last
         # some buggy servers do this. sigh.
         location = location.gsub(" ", "%20")
         response.uri = URI.parse(location)
       end
 
+      # throw HTTP errors if necessary
       if response.code >= 400
         e = Error.new("chuckle failed, http status=#{response.code}")
         e.request = request

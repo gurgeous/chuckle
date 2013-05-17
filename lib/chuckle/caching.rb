@@ -10,11 +10,6 @@ module Chuckle
       Util.rm_if_necessary(cache_path(uri))
     end
 
-    def stale?(path)
-      return false if expires_in == :infinite || !File.exists?(path)
-      File.stat(path).ctime + (expires_in * 24 * 60 * 60) < Time.now
-    end
-
     # turn uri into a cache path
     def cache_path(uri, body = nil)
       uri = to_uri(uri)
@@ -38,6 +33,11 @@ module Chuckle
     end
 
     protected
+
+    def stale?(path)
+      return false if expires_in == :infinite || !File.exists?(path)
+      File.stat(path).ctime + (expires_in * 24 * 60 * 60) < Time.now
+    end
 
     # turn s into a string that can be a path
     def pathify(s)

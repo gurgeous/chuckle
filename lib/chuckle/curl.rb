@@ -20,6 +20,7 @@ module Chuckle
     def command(request)
       command = ["curl"]
       command << "--silent"
+      command << "--compressed"
       command += [ "--user-agent", @chuckle.user_agent]
       command += ["--max-time", @chuckle.timeout]
       command += ["--retry", @chuckle.nretries]
