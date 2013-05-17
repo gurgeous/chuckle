@@ -1,4 +1,4 @@
-require "fileutils"
+require "uri"
 
 module Chuckle
   class Client
