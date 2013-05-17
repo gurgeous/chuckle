@@ -1,3 +1,5 @@
+require "fileutils"
+
 module Chuckle
   class Cache
     def initialize(client)

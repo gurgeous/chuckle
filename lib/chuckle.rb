@@ -1,4 +1,5 @@
 require "chuckle/cache"
+require "chuckle/cookie_jar"
 require "chuckle/error"
 require "chuckle/options"
 require "chuckle/request"

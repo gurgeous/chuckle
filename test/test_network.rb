@@ -31,7 +31,7 @@ class TestNetwork < Minitest::Test
     client(cookies: true, expires_in: 60) # set options
 
     request = client.create_request("http://httpbin.org/get")
-    cookie_jar = Chuckle::Curl.new(request).send(:cookie_jar_bogus_request).body_path
+    cookie_jar = Chuckle::CookieJar.new(request).path
 
     # make sure there are no cookies after the GET
     client.run(request)
@@ -45,10 +45,11 @@ class TestNetwork < Minitest::Test
     response = client.get("http://httpbin.org/cookies")
     assert_equal JSON.parse(response.body)["cookies"], cookies
 
-    # finally, test cache expiry on cookie_jar
+    # Finally, test cache expiry on cookie_jar. Note that this has to
+    # be an un-cached URL, otherwise the cookie_jar never gets
+    # checked!
     tm = Time.now - (client.expires_in + 9999)
     File.utime(tm, tm, cookie_jar)
-    # note: this has to be an un-cached URL
     client.get("http://httpbin.org/robots.txt")
     assert !File.exists?(cookie_jar), "cookie jar should've expired"
   end

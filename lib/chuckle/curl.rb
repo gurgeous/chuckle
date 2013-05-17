@@ -1,10 +1,7 @@
 require "fileutils"
-require "ostruct"
 
 module Chuckle
   class Curl
-    COOKIE_JAR = "_chuckle_cookies.txt"
-
     def initialize(request)
       @request = request
       run
@@ -72,8 +69,9 @@ module Chuckle
       end
 
       if client.cookies?
-        command += ["--cookie", cookie_jar]
-        command += ["--cookie-jar", cookie_jar]
+        cookie_jar.preflight
+        command += ["--cookie", cookie_jar.path]
+        command += ["--cookie-jar", cookie_jar.path]
       end
 
       command += ["--dump-header", headers_path]
@@ -85,21 +83,8 @@ module Chuckle
       command
     end
 
-    # the cookie jar is stored in the cache, kinda like a bogus
-    # request
-    def cookie_jar_bogus_request
-      uri = @request.uri + "/#{COOKIE_JAR}"
-      Request.new(@request.client, uri)
-    end
-
     def cookie_jar
-      @cookie_jar ||= begin
-        # it expires just like other cache files
-        request = cookie_jar_bogus_request
-        request.client.cache.expired?(request)
-        FileUtils.mkdir_p(File.dirname(request.body_path))
-        request.body_path
-      end
+      @cookie_jar ||= CookieJar.new(@request)
     end
   end
 end
