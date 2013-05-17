@@ -1,0 +1,6 @@
+*.gem
+.bundle
+.rake-complete-cache
+Gemfile.lock
+pkg/*
+rdoc

@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+# in lieu of -w, since we're using env to startup
+$VERBOSE = true
+
+# REMIND
