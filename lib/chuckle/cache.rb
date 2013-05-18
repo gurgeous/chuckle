@@ -20,11 +20,13 @@ module Chuckle
     end
 
     def set(request, curl)
-      %w(body headers).each do |i|
-        src, dst = curl.send("#{i}_path"), request.send("#{i}_path")
-        FileUtils.mkdir_p(File.dirname(dst))
-        FileUtils.mv(src, dst)
-      end
+      # mkdirs
+      FileUtils.mkdir_p([File.dirname(request.headers_path), File.dirname(request.body_path)])
+
+      # now mv
+      FileUtils.mv(curl.headers_path, request.headers_path)
+      FileUtils.mv(curl.body_path, request.body_path)
+
       Response.new(request)
     end
 
