@@ -37,7 +37,7 @@ module Chuckle
         self.uri = URI.parse(location)
       end
 
-      codes = headers.scan(/^HTTP\/\d\.\d (\d+).*?\r\n\r\n/m).flatten
+      codes = headers.scan(/^HTTP\/\d\.\d (\d+).*?\r\n/m).flatten
       codes = codes.map(&:to_i)
       self.code = codes.last
     end
