@@ -24,6 +24,13 @@ class TestRequests < Minitest::Test
     assert_equal "hello\n", response.body
   end
 
+  def test_302_relative
+    response = mcurl(HTTP_302_RELATIVE) { client.get(URL) }
+    assert_equal 200, response.code
+    assert_equal URI.parse("#{URL}/two"), response.uri
+    assert_equal "hello\n", response.body
+  end
+
   def test_404
     e = assert_raises Chuckle::Error do
       mcurl(HTTP_404) do

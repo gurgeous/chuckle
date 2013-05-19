@@ -46,6 +46,15 @@ module Helper
     hello
   EOF
 
+  HTTP_302_RELATIVE = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/1.1 302 FOUND
+    Location: /two
+
+    HTTP/1.0 200 OK
+
+    hello
+  EOF
+
   HTTP_404 = <<-EOF.gsub(/(^|\n) +/, "\\1")
     HTTP/1.1 404 Not Found
 

@@ -71,7 +71,7 @@ module Chuckle
       if !cache_errors?
         cache.clear(response.request)
       end
-      raise Error.new("#{Error.class}, #{error}", response)
+      raise Error.new("Chuckle::Error, #{error}", response)
     end
 
     def vputs(s)

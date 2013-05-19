@@ -29,12 +29,13 @@ module Chuckle
     def parse
       self.curl_exit_code = Curl.exit_code_from_headers(headers)
 
+      self.uri = request.uri
       locations = headers.scan(/^Location: ([^\r\n]+)/m).flatten
       if !locations.empty?
         location = locations.last
         # some buggy servers do this. sigh.
         location = location.gsub(" ", "%20")
-        self.uri = URI.parse(location)
+        self.uri += location
       end
 
       codes = headers.scan(/^HTTP\/\d\.\d (\d+).*?\r\n/m).flatten
