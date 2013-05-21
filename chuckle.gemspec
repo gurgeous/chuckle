@@ -15,6 +15,8 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "chuckle"
 
+  s.add_runtime_dependency "trollop"
+
   s.add_development_dependency "awesome_print"
   s.add_development_dependency "json"
   s.add_development_dependency "minitest", "~> 5.0"

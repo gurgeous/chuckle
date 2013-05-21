@@ -8,6 +8,7 @@ module Helper
   CACHE_DIR = "/tmp/_chuckle_tests"
   URL = "http://chuckle"
   QUERY = { "b" => "12", "a" => "34", "x y" => "56" }
+  TMP = "/tmp/_chuckle_tmp.txt"
 
   #
   # fake responses
@@ -98,5 +99,10 @@ module Helper
       assert false, "system called with #{command.inspect}"
     end
     Kernel.stub(:system, fake_system) { yield }
+  end
+
+  def assert_command(cmd)
+    system("#{cmd} > #{TMP} 2>&1")
+    assert($? == 0, File.read(TMP))
   end
 end

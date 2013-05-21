@@ -1,0 +1,52 @@
+#!/usr/bin/env ruby
+
+# in lieu of -w, since we're using env to startup
+$VERBOSE = true
+
+require "chuckle"
+require "trollop"
+
+class Main
+  attr_accessor :options
+
+  def initialize(options = {})
+    self.options = options
+    list = IO.readlines(options[:file]).map(&:chomp)
+    list.each_with_index do |i, index|
+      puts "#{index+1}/#{list.length}. #{i}"
+      begin
+        chuckle.get(i)
+      rescue Chuckle::Error => e
+        puts "  #{e.message}"
+      end
+    end
+  end
+
+  protected
+
+  def chuckle
+    @chuckle ||= Chuckle::Client.new(nretries: options[:nretries], timeout: options[:timeout])
+  end
+end
+
+
+
+#
+# parse command line
+#
+
+options = Trollop.options do
+  banner <<EOF
+Usage: chuckle <url_file>
+
+chuckle fetches urls as listed in url_file. It just populate the disk
+cache.
+EOF
+
+  opt :nretries, "Number of retries per URL", type: Integer
+  opt :timeout, "Timeout per retry", type: Integer
+end
+
+Trollop.die "need <url_file>" if ARGV.length != 1
+options[:file] = ARGV.shift
+Main.new(options)

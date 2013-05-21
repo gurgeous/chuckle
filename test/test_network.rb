@@ -53,4 +53,9 @@ class TestNetwork < Minitest::Test
     client.get("http://httpbin.org/robots.txt")
     assert !File.exists?(cookie_jar), "cookie jar should've expired"
   end
+
+  def test_bin
+    Dir.chdir(File.expand_path("../", __FILE__))
+    assert_command("../bin/chuckle url_file.txt")
+  end
 end
