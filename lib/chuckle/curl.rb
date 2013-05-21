@@ -4,7 +4,6 @@ module Chuckle
   class Curl
     def initialize(request)
       @request = request
-      run
     end
 
     # tmp path for response headers
@@ -24,7 +23,7 @@ module Chuckle
 
       # capture exit code, bail on INT
       exit_code = $?.to_i / 256
-      if exit_code != 0 && $?.termsig == Signal.list["INT"]
+      if $?.termsig == Signal.list["INT"]
         Process.kill(:INT, $$)
       end
 
@@ -35,6 +34,12 @@ module Chuckle
       if exit_code != 0
         IO.write(headers_path, Curl.exit_code_to_headers(exit_code))
       end
+    end
+
+    # make sure we don't accidentally leave any files hanging around
+    def cleanup
+      Util.rm_if_necessary(headers_path)
+      Util.rm_if_necessary(body_path)
     end
 
     def self.exit_code_to_headers(exit_code)

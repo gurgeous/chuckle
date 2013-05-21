@@ -7,7 +7,8 @@ module Chuckle
     attr_accessor :options, :cache
 
     def initialize(options = {})
-      self.options = DEFAULT_OPTIONS.merge(options)
+      self.options = DEFAULT_OPTIONS.dup
+      options.each { |k, v| self.options[k] = v if v }
       self.cache = Cache.new(self)
       sanity!
     end
@@ -56,7 +57,14 @@ module Chuckle
     def curl(request)
       vputs request.uri
       rate_limit!(request)
-      cache.set(request, Curl.new(request))
+
+      curl = Curl.new(request)
+      begin
+        curl.run
+        cache.set(request, curl)
+      ensure
+        curl.cleanup
+      end
     end
 
     def raise_errors(response)
@@ -71,7 +79,7 @@ module Chuckle
       if !cache_errors?
         cache.clear(response.request)
       end
-      raise Error.new("Chuckle::Error, #{error}", response)
+      raise Error.new(error, response)
     end
 
     def vputs(s)
