@@ -8,7 +8,7 @@ module Chuckle
 
     def initialize(options = {})
       self.options = DEFAULT_OPTIONS.dup
-      options.each { |k, v| self.options[k] = v if v }
+      options.each { |k, v| self.options[k] = v if v != nil }
       self.cache = Cache.new(self)
       sanity!
     end
