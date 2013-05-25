@@ -1,26 +1,8 @@
-require "bundler"
-require "bundler/setup"
+require "bundler/gem_helper"
 require "rake/testtask"
 require "rdoc/task"
 
-#
-# gem
-#
-
-task gem: :build
-task :build do
-  system "gem build --quiet chuckle.gemspec"
-end
-
-task install: :build do
-  system "sudo gem install --quiet chuckle-#{Chuckle::VERSION}.gem"
-end
-
-task release: :build do
-  system "git tag -a #{Chuckle::VERSION} -m 'Tagging #{Chuckle::VERSION}'"
-  system "git push --tags"
-  system "gem push chuckle-#{Chuckle::VERSION}.gem"
-end
+Bundler::GemHelper.install_tasks
 
 #
 # test
