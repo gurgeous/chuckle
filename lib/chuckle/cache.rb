@@ -53,7 +53,7 @@ module Chuckle
 
       # calculate body_path
       s = @client.cache_dir
-      s = "#{s}/#{pathify(uri.host)}"
+      s = "#{s}/#{pathify(uri.host || "file")}"
       s = "#{s}/#{pathify(uri.path)}"
       if uri.query
         q = "?#{uri.query}"

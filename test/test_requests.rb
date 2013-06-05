@@ -59,4 +59,18 @@ class TestRequests < Minitest::Test
     assert_equal URI.parse(URL), response.uri
     assert_equal "hello\n", response.body
   end
+
+  def test_strange_urls
+    [
+     "gub",
+     "file://gub",
+     "file://gub/gub",
+     "file:///gub",
+    ].each do |url|
+      response = mcurl(HTTP_200) { client.get(url) }
+      assert_equal 200, response.code
+      assert_equal URI.parse(url), response.uri
+      assert_equal "hello\n", response.body
+    end
+  end
 end
