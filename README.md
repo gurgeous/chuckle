@@ -56,7 +56,9 @@ Pass these `Chuckle::Client.new`:
 * **user_agent** - the user agent. Defaults to the IE9 user agent.
 * **verbose** (false) - if true, prints each request before fetching. Only prints network requests.
 
+## Changelog
 
+* 1.0.4 - added support for --cacert, --capath and --insecure (@nkriege)
 
 
 ## Limitations
