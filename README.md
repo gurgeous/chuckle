@@ -58,7 +58,7 @@ Pass these `Chuckle::Client.new`:
 
 ## Changelog
 
-* 1.0.4 - added support for --cacert, --capath and --insecure (@nkriege)
+* 1.0.4 (Dec 16, 2014) - added support for --cacert, --capath and --insecure (@nkriege)
 
 
 ## Limitations
