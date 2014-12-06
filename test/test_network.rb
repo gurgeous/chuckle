@@ -54,6 +54,16 @@ class TestNetwork < Minitest::Test
     assert !File.exists?(cookie_jar), "cookie jar should've expired"
   end
 
+  def test_https
+    response = client.get("https://httpbin.org/get")
+    assert_equal 200, response.code
+  end
+
+  def test_https_insecure
+    response = client(insecure: true).get("https://httpbin.org/get")
+    assert_equal 200, response.code
+  end
+
   def test_bin
     Dir.chdir(File.expand_path("../", __FILE__))
     assert_command("../bin/chuckle url_file.txt")

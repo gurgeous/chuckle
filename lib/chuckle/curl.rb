@@ -79,6 +79,11 @@ module Chuckle
         command += ["--cookie-jar", cookie_jar.path]
       end
 
+      # SSL options
+      command += ["--cacert", client.cacert] if client.cacert
+      command += ["--capath", client.capath] if client.capath
+      command += ["--insecure"] if client.insecure?
+
       command += ["--dump-header", headers_path]
       command += ["--output", body_path]
 

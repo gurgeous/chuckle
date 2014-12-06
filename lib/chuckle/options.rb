@@ -3,8 +3,11 @@ module Chuckle
     DEFAULT_OPTIONS = {
       cache_dir: nil,
       cache_errors: true,
+      cacert: nil,
+      capath: nil,
       cookies: false,
       expires_in: :never,
+      insecure: false,
       nretries: 2,
       rate_limit: 1,
       timeout: 30,
@@ -33,6 +36,16 @@ module Chuckle
       options[:cache_errors]
     end
 
+    # cacert to pass to curl
+    def cacert
+      options[:cacert]
+    end
+
+    # capath to pass to curl
+    def capath
+      options[:capath]
+    end
+
     # are cookies enabled?
     def cookies?
       options[:cookies]
@@ -41,6 +54,11 @@ module Chuckle
     # number of seconds to cache responses and cookies, or :never
     def expires_in
       options[:expires_in]
+    end
+
+    # allow insecure SSL connections?
+    def insecure?
+      options[:insecure]
     end
 
     # number of retries to attempt

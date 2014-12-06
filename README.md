@@ -45,8 +45,11 @@ Pass these `Chuckle::Client.new`:
 
 * **cache_dir** (~/.chuckle) - where chuckle should cache files. If HOME doesn't exist or isn't writable, it'll use `/tmp/chuckle` instead
 * **cache_errors** (true) - false to not cache errors on disk (timeouts, http status >= 400, etc.)
+* **cacert** (nil) - cacert option to pass to curl
+* **capath** (nil) - capath option to pass to curl
 * **cookies** (false) - true to turn on cookie support
 * **expires_in** (:never) - time in seconds after which cache files should expire, or `:never` to never expire
+* **insecure** (false) - true to allow insecure SSL connections
 * **nretries** (2) - number of times to retry a failing request
 * **rate_limit** (1) - number of seconds between requests
 * **timeout** (30) - timeout per request. Note that if `nretries` is 2 and `timeout` is 30, a failing request could take 90 seconds to truly fail.
