@@ -58,6 +58,7 @@ Pass these `Chuckle::Client.new`:
 
 ## Changelog
 
+* 1.0.5 (Jan 30, 2015) - added support for setting content type (@pattymac)
 * 1.0.4 (Dec 6, 2014) - added support for --cacert, --capath and --insecure (@nkriege)
 
 
