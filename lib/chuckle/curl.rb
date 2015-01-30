@@ -70,7 +70,7 @@ module Chuckle
 
       if request.body
         command += ["--data-binary", request.body]
-        command += ["--header", "Content-Type: application/x-www-form-urlencoded"]
+        command += ["--header", "Content-Type: #{client.content_type}"]
       end
 
       if client.cookies?
