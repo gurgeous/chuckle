@@ -5,6 +5,7 @@ module Chuckle
       cache_errors: true,
       cacert: nil,
       capath: nil,
+      content_type: "application/x-www-form-urlencoded",
       cookies: false,
       expires_in: :never,
       insecure: false,
@@ -44,6 +45,10 @@ module Chuckle
     # capath to pass to curl
     def capath
       options[:capath]
+    end
+
+    def content_type
+      options[:content_type]
     end
 
     # are cookies enabled?
