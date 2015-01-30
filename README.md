@@ -48,6 +48,7 @@ Pass these `Chuckle::Client.new`:
 * **cacert** (nil) - cacert option to pass to curl
 * **capath** (nil) - capath option to pass to curl
 * **cookies** (false) - true to turn on cookie support
+* **content_type** (application/x-www-form-urlencoded) - default content type for POST
 * **expires_in** (:never) - time in seconds after which cache files should expire, or `:never` to never expire
 * **insecure** (false) - true to allow insecure SSL connections
 * **nretries** (2) - number of times to retry a failing request
