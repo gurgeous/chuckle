@@ -73,6 +73,8 @@ module Chuckle
         command += ["--header", "Content-Type: #{client.content_type}"]
       end
 
+      command += ["--header", "Referer: #{client.referer}"] if client.referer
+
       if client.cookies?
         cookie_jar.preflight
         command += ["--cookie", cookie_jar.path]

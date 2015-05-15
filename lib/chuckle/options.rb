@@ -11,6 +11,7 @@ module Chuckle
       insecure: false,
       nretries: 2,
       rate_limit: 1,
+      referer: nil,
       timeout: 30,
       user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0",
       verbose: false,
@@ -74,6 +75,10 @@ module Chuckle
     # number of seconds between requests
     def rate_limit
       options[:rate_limit]
+    end
+
+    def referer
+      options[:referer]
     end
 
     # timeout per retry
