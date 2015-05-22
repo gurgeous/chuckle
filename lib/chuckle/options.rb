@@ -8,6 +8,7 @@ module Chuckle
       content_type: "application/x-www-form-urlencoded",
       cookies: false,
       expires_in: :never,
+      headers: nil,
       insecure: false,
       nretries: 2,
       rate_limit: 1,
@@ -59,6 +60,15 @@ module Chuckle
     # number of seconds to cache responses and cookies, or :never
     def expires_in
       options[:expires_in]
+    end
+
+    # maintain backwards compatibility for content_type
+    def headers
+      @headers ||= begin
+        headers = options[:headers] || {}
+        headers["Content-Type"] = options[:content_type] if options[:content_type]
+        headers
+      end
     end
 
     # allow insecure SSL connections?
