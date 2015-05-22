@@ -8,10 +8,10 @@ module Chuckle
       content_type: "application/x-www-form-urlencoded",
       cookies: false,
       expires_in: :never,
+      headers: {},
       insecure: false,
       nretries: 2,
       rate_limit: 1,
-      referer: nil,
       timeout: 30,
       user_agent: "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0",
       verbose: false,
@@ -62,6 +62,15 @@ module Chuckle
       options[:expires_in]
     end
 
+    # maintain backwards compatibility for content_type
+    def headers
+      @headers ||= begin
+        headers = options[:headers]
+        headers["Content-Type"] = options[:content_type] if options[:content_type]
+        headers
+      end
+    end
+
     # allow insecure SSL connections?
     def insecure?
       options[:insecure]
@@ -75,10 +84,6 @@ module Chuckle
     # number of seconds between requests
     def rate_limit
       options[:rate_limit]
-    end
-
-    def referer
-      options[:referer]
     end
 
     # timeout per retry

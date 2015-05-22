@@ -51,16 +51,16 @@ Pass these `Chuckle::Client.new`:
 * **content_type** (application/x-www-form-urlencoded) - default content type for POST
 * **expires_in** (:never) - time in seconds after which cache files should expire, or `:never` to never expire
 * **insecure** (false) - true to allow insecure SSL connections
+* **headers** ({}) - optional hash of headers to include for all requests.  example: {"Referer" => "http://foo.com"}
 * **nretries** (2) - number of times to retry a failing request
 * **rate_limit** (1) - number of seconds between requests
-* **referer** (nil) - optional header to pass for all requests
 * **timeout** (30) - timeout per request. Note that if `nretries` is 2 and `timeout` is 30, a failing request could take 90 seconds to truly fail.
 * **user_agent** - the user agent. Defaults to the IE9 user agent.
 * **verbose** (false) - if true, prints each request before fetching. Only prints network requests.
 
 ## Changelog
 
-* 1.0.6 (May 15, 2015) - added support for setting referer (@pattymac)
+* 1.0.6 (May 15, 2015) - added support for setting arbitrary headers (@pattymac)
 * 1.0.5 (Jan 30, 2015) - added support for setting content type (@pattymac)
 * 1.0.4 (Dec 6, 2014) - added support for --cacert, --capath and --insecure (@nkriege)
 

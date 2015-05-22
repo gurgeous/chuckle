@@ -70,10 +70,16 @@ module Chuckle
 
       if request.body
         command += ["--data-binary", request.body]
-        command += ["--header", "Content-Type: #{client.content_type}"]
       end
 
-      command += ["--header", "Referer: #{client.referer}"] if client.referer
+      # maintain backwards compatibility for content type
+      client.headers.each do |key,value|
+        if key == "Content-Type"
+          command += ["--header", "#{key}: #{value}"] if request.body
+        else
+          command += ["--header", "#{key}: #{value}"]
+        end
+      end
 
       if client.cookies?
         cookie_jar.preflight
