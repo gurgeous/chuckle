@@ -23,7 +23,7 @@ module Chuckle
         dir = options[:cache_dir]
         dir ||= begin
           if home = ENV["HOME"]
-            if File.exists?(home) && File.stat(home).writable?
+            if File.exist?(home) && File.stat(home).writable?
               "#{home}/.chuckle"
             end
           end

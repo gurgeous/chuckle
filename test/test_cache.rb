@@ -176,7 +176,7 @@ class TestCache < Minitest::Test
     2.times do
       begin
         mcurl(HTTP_404) { client.get(URL) }
-      rescue Chuckle::Error => e
+      rescue Chuckle::Error
       end
     end
     assert_equal 2, client.cache.misses

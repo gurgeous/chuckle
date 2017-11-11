@@ -19,7 +19,7 @@ module Chuckle
     end
 
     def rm_if_necessary(path)
-      File.unlink(path) if File.exists?(path)
+      File.unlink(path) if File.exist?(path)
     end
 
     def tmp_path

@@ -36,7 +36,7 @@ module Chuckle
     end
 
     def exists?(request)
-      File.exists?(request.body_path)
+      File.exist?(request.body_path)
     end
 
     def expired?(request)

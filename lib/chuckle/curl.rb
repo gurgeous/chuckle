@@ -28,7 +28,7 @@ module Chuckle
       end
 
       # create tmp files if there were errors
-      if !File.exists?(body_path)
+      if !File.exist?(body_path)
         FileUtils.touch(body_path)
       end
       if exit_code != 0
