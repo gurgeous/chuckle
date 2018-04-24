@@ -26,6 +26,13 @@ module Helper
     alternate
   EOF
 
+
+  HTTP2_200 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+    HTTP/2 200 OK
+
+    hello
+  EOF
+
   HTTP_302 = <<-EOF.gsub(/(^|\n) +/, "\\1")
     HTTP/1.1 302 FOUND
     Location: http://one
