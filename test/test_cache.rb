@@ -71,7 +71,7 @@ class TestCache < Minitest::Test
       mcurl(HTTP_404) do
         client.get(URL)
       end
-    rescue Chuckle::Error => e
+    rescue Chuckle::Error
     end
 
     # cache hit
@@ -91,7 +91,7 @@ class TestCache < Minitest::Test
       mcurl(HTTP_404, Chuckle::Error::CURL_TIMEOUT) do
         client.get(URL)
       end
-    rescue Chuckle::Error => e
+    rescue Chuckle::Error
     end
 
     # cache hit

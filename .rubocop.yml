@@ -1,22 +1,5 @@
-Rails:
-  Enabled: true
-
 AllCops:
-  Exclude:
-    - 'db/schema.rb'
-    - 'node_modules/**/*'
-    - 'vendor/**/*'
-    - 'bin/bundle'
-    - 'bin/pre-commit'
-    - 'bin/puma'
-    - 'bin/pumactl'
-    - 'bin/rails'
-    - 'bin/rake'
-    - 'bin/spring'
-    - 'bin/webpack'
-    - 'bin/webpack-dev-server'
-    - 'bin/yarn'
-    - 'db/seeds.rb'
+  TargetRubyVersion: 2.1.0
 
 # amd: customizations
 Layout/SpaceInsideArrayLiteralBrackets:
@@ -25,6 +8,8 @@ Layout/CaseIndentation:
   EnforcedStyle: end
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
+Layout/IndentHeredoc:
+  Enabled: false
 Style/CollectionMethods:
   Enabled: true
   PreferredMethods:
@@ -39,6 +24,8 @@ Lint/AssignmentInCondition: { Enabled: false } # I do this all the time
 Lint/HandleExceptions: { Enabled: false } # blank rescues are useful
 Naming/BinaryOperatorParameterName: { Enabled: false } # silly
 Naming/HeredocDelimiterNaming: { Enabled: false } # silly
+Naming/UncommunicativeMethodParamName: { Enabled: false } # silly
+Performance/FixedSize: { Enabled: false } # silly
 Performance/RegexpMatch: { Enabled: false } # =~ is fine
 Performance/TimesMap: { Enabled: false } # silly
 Rails/FilePath: { Enabled: false }
