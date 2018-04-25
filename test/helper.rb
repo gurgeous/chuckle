@@ -1,39 +1,38 @@
-require "awesome_print"
-require "chuckle"
-require "json"
-require "minitest/autorun"
-require "minitest/pride"
+require 'awesome_print'
+require 'chuckle'
+require 'json'
+require 'minitest/autorun'
+require 'minitest/pride'
 
 module Helper
-  CACHE_DIR = "/tmp/_chuckle_tests"
-  URL = "http://chuckle"
-  QUERY = { "b" => "12", "a" => "34", "x y" => "56" }
-  TMP = "/tmp/_chuckle_tmp.txt"
+  CACHE_DIR = '/tmp/_chuckle_tests'.freeze
+  URL = 'http://chuckle'.freeze
+  QUERY = { 'b' => '12', 'a' => '34', 'x y' => '56' }.freeze
+  TMP = '/tmp/_chuckle_tmp.txt'.freeze
 
   #
   # fake responses
   #
 
-  HTTP_200 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_200 = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 200 OK
 
     hello
   EOF
 
-  HTTP_200_ALTERNATE = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_200_ALTERNATE = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 200 OK
 
     alternate
   EOF
 
-
-  HTTP2_200 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP2_200 = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/2 200 OK
 
     hello
   EOF
 
-  HTTP_302 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_302 = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 302 FOUND
     Location: http://one
 
@@ -42,7 +41,7 @@ module Helper
     hello
   EOF
 
-  HTTP_302_2 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_302_2 = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 302 FOUND
     Location: http://one
 
@@ -54,7 +53,7 @@ module Helper
     hello
   EOF
 
-  HTTP_302_RELATIVE = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_302_RELATIVE = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 302 FOUND
     Location: /two
 
@@ -63,7 +62,7 @@ module Helper
     hello
   EOF
 
-  HTTP_404 = <<-EOF.gsub(/(^|\n) +/, "\\1")
+  HTTP_404 = <<-EOF.gsub(/(^|\n) +/, '\\1')
     HTTP/1.1 404 Not Found
 
   EOF
@@ -82,7 +81,7 @@ module Helper
   end
 
   # pretend to be curl by stubbing Kernel.system
-  def mcurl(response, exit_code = 0, &block)
+  def mcurl(response, exit_code = 0)
     # divide response into headers/body
     sep = response.rindex("\n\n") + "\n\n".length
     body = response[sep..-1]
@@ -90,8 +89,8 @@ module Helper
 
     # a lambda that pretends to be curl
     fake_system = lambda do |*command|
-      tmp_headers = command[command.index("--dump-header") + 1]
-      tmp_body    = command[command.index("--output") + 1]
+      tmp_headers = command[command.index('--dump-header') + 1]
+      tmp_body    = command[command.index('--output') + 1]
       IO.write(tmp_headers, headers)
       IO.write(tmp_body, body)
       `(exit #{exit_code})`
@@ -101,7 +100,7 @@ module Helper
     Kernel.stub(:system, fake_system) { yield }
   end
 
-  def assert_if_system(&block)
+  def assert_if_system
     fake_system = lambda do |*command|
       assert false, "system called with #{command.inspect}"
     end
@@ -110,6 +109,6 @@ module Helper
 
   def assert_command(cmd)
     system("#{cmd} > #{TMP} 2>&1")
-    assert($? == 0, File.read(TMP))
+    assert($CHILD_STATUS == 0, File.read(TMP))
   end
 end

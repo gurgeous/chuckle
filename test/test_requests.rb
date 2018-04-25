@@ -1,4 +1,4 @@
-require "helper"
+require 'helper'
 
 class TestRequests < Minitest::Test
   include Helper
@@ -20,14 +20,14 @@ class TestRequests < Minitest::Test
   def test_302
     response = mcurl(HTTP_302) { client.get(URL) }
     assert_equal 200, response.code
-    assert_equal URI.parse("http://one"), response.uri
+    assert_equal URI.parse('http://one'), response.uri
     assert_equal "hello\n", response.body
   end
 
   def test_302_2
     response = mcurl(HTTP_302_2) { client.get(URL) }
     assert_equal 200, response.code
-    assert_equal URI.parse("http://two"), response.uri
+    assert_equal URI.parse('http://two'), response.uri
     assert_equal "hello\n", response.body
   end
 
@@ -58,7 +58,7 @@ class TestRequests < Minitest::Test
 
   def test_post
     # just test hash_to_query first
-    assert_equal "a=34&b=12&x+y=56", Chuckle::Util.hash_to_query(QUERY)
+    assert_equal 'a=34&b=12&x+y=56', Chuckle::Util.hash_to_query(QUERY)
 
     response = mcurl(HTTP_200) { client.post(URL, QUERY) }
     assert_equal response.request.body, Chuckle::Util.hash_to_query(QUERY)
@@ -69,10 +69,10 @@ class TestRequests < Minitest::Test
 
   def test_strange_urls
     [
-     "gub",
-     "file://gub",
-     "file://gub/gub",
-     "file:///gub",
+      'gub',
+      'file://gub',
+      'file://gub/gub',
+      'file:///gub',
     ].each do |url|
       response = mcurl(HTTP_200) { client.get(url) }
       assert_equal 200, response.code

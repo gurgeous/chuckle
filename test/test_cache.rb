@@ -1,4 +1,4 @@
-require "helper"
+require 'helper'
 
 class TestCache < Minitest::Test
   include Helper
@@ -10,16 +10,16 @@ class TestCache < Minitest::Test
   # exists? and expired? (and clear)
   def test_predicates
     request = client.create_request(URL)
-    assert !client.cache.exists?(request), "uncache! uri said it was cached"
+    assert !client.cache.exists?(request), 'uncache! uri said it was cached'
 
     mcurl(HTTP_200) do
       client.run(request)
     end
     assert client.cache.exists?(request), "cache said it wasn't cached"
-    assert !client.cache.expired?(request), "cache said it was expired"
+    assert !client.cache.expired?(request), 'cache said it was expired'
 
     client.cache.clear(request)
-    assert !client.cache.exists?(request), "still cached after clear"
+    assert !client.cache.exists?(request), 'still cached after clear'
   end
 
   # cache expiration
@@ -123,9 +123,9 @@ class TestCache < Minitest::Test
   end
 
   def test_long_url
-    words = %w(the quick brown fox jumped over the lazy dog)
+    words = %w[the quick brown fox jumped over the lazy dog]
     query = (1..100).map { words[rand(words.length)] }
-    query = query.each_slice(2).map { |i| i.join("=") }.join("&")
+    query = query.each_slice(2).map { |i| i.join('=') }.join('&')
 
     # cache miss
     mcurl(HTTP_200) do

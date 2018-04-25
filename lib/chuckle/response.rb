@@ -34,7 +34,7 @@ module Chuckle
       if !locations.empty?
         location = locations.last
         # some buggy servers do this. sigh.
-        location = location.gsub(" ", "%20")
+        location = location.gsub(' ', '%20')
         self.uri += location
       end
 

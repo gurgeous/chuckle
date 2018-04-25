@@ -1,4 +1,5 @@
-require "uri"
+require 'English'
+require 'uri'
 
 module Chuckle
   class Client
@@ -8,7 +9,7 @@ module Chuckle
 
     def initialize(options = {})
       self.options = DEFAULT_OPTIONS.dup
-      options.each { |k, v| self.options[k] = v if v != nil }
+      options.each { |k, v| self.options[k] = v if !v.nil? }
       self.cache = Cache.new(self)
       sanity!
     end
@@ -50,8 +51,8 @@ module Chuckle
 
     # make sure curl command exists
     def sanity!
-      system("which curl > /dev/null")
-      raise "Chuckle requires curl. Please install it." if $? != 0
+      system('which curl > /dev/null')
+      raise 'Chuckle requires curl. Please install it.' if $CHILD_STATUS != 0
     end
 
     def curl(request)

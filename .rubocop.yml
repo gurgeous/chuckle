@@ -1,0 +1,73 @@
+Rails:
+  Enabled: true
+
+AllCops:
+  Exclude:
+    - 'db/schema.rb'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'bin/bundle'
+    - 'bin/pre-commit'
+    - 'bin/puma'
+    - 'bin/pumactl'
+    - 'bin/rails'
+    - 'bin/rake'
+    - 'bin/spring'
+    - 'bin/webpack'
+    - 'bin/webpack-dev-server'
+    - 'bin/yarn'
+    - 'db/seeds.rb'
+
+# amd: customizations
+Layout/SpaceInsideArrayLiteralBrackets:
+  EnforcedStyle: compact
+Layout/CaseIndentation:
+  EnforcedStyle: end
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+Style/CollectionMethods:
+  Enabled: true
+  PreferredMethods:
+    reduce: inject
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+# amd: these seem extreme
+Lint/AssignmentInCondition: { Enabled: false } # I do this all the time
+Lint/HandleExceptions: { Enabled: false } # blank rescues are useful
+Naming/BinaryOperatorParameterName: { Enabled: false } # silly
+Naming/HeredocDelimiterNaming: { Enabled: false } # silly
+Performance/RegexpMatch: { Enabled: false } # =~ is fine
+Performance/TimesMap: { Enabled: false } # silly
+Rails/FilePath: { Enabled: false }
+Rails/LexicallyScopedActionFilter: { Enabled: false }
+Rails/OutputSafety: { Enabled: false }
+Rails/ReversibleMigration: { Enabled: false } # who cares
+Rails/SkipsModelValidations: { Enabled: false } # silly
+Style/ClassAndModuleChildren: { Enabled: false } # silly
+Style/Documentation: { Enabled: false } # we don't need this
+Style/FormatStringToken: { Enabled: false } # we like printf here
+Style/FrozenStringLiteralComment: { Enabled: false } # seems excessive
+Style/GuardClause: { Enabled: false } # confusing
+Style/IfUnlessModifier: { Enabled: false } # personally I hate unless
+Style/NegatedIf: { Enabled: false } # these are fine
+Style/Next: { Enabled: false } # these are fine
+Style/NumericPredicate: { Enabled: false } # silly
+Style/ParallelAssignment: { Enabled: false } # these are fine
+Style/PerlBackrefs: { Enabled: false } # these are fine
+Style/RaiseArgs: { Enabled: false } # silly
+Style/RegexpLiteral: { Enabled: false } # these are fine
+
+# amd: these Metric rules are annoying, disable
+Metrics/AbcSize: { Enabled: false }
+Metrics/BlockLength: { Enabled: false }
+Metrics/BlockNesting: { Enabled: false }
+Metrics/ClassLength: { Enabled: false }
+Metrics/CyclomaticComplexity: { Enabled: false }
+Metrics/LineLength: { Enabled: false }
+Metrics/MethodLength: { Enabled: false }
+Metrics/ModuleLength: { Enabled: false }
+Metrics/ParameterLists: { Enabled: false }
+Metrics/PerceivedComplexity: { Enabled: false }

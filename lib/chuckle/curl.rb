@@ -1,4 +1,5 @@
-require "fileutils"
+require 'English'
+require 'fileutils'
 
 module Chuckle
   class Curl
@@ -22,9 +23,9 @@ module Chuckle
       Kernel.system(*command)
 
       # capture exit code, bail on INT
-      exit_code = $?.to_i / 256
-      if $?.termsig == Signal.list["INT"]
-        Process.kill(:INT, $$)
+      exit_code = $CHILD_STATUS.to_i / 256
+      if $CHILD_STATUS.termsig == Signal.list['INT']
+        Process.kill(:INT, $PROCESS_ID)
       end
 
       # create tmp files if there were errors
@@ -59,41 +60,41 @@ module Chuckle
     def command(request)
       client = request.client
 
-      command = ["curl"]
-      command << "--silent"
-      command << "--compressed"
+      command = [ 'curl' ]
+      command << '--silent'
+      command << '--compressed'
 
-      command += [ "--user-agent", client.user_agent]
-      command += ["--max-time", client.timeout]
-      command += ["--retry", client.nretries]
-      command += ["--location", "--max-redirs", 3]
+      command += [ '--user-agent', client.user_agent ]
+      command += [ '--max-time', client.timeout ]
+      command += [ '--retry', client.nretries ]
+      command += [ '--location', '--max-redirs', 3 ]
 
       if request.body
-        command += ["--data-binary", request.body]
+        command += [ '--data-binary', request.body ]
       end
 
       # maintain backwards compatibility for content type
-      client.headers.each do |key,value|
-        if key == "Content-Type"
-          command += ["--header", "#{key}: #{value}"] if request.body
+      client.headers.each do |key, value|
+        if key == 'Content-Type'
+          command += [ '--header', "#{key}: #{value}" ] if request.body
         else
-          command += ["--header", "#{key}: #{value}"]
+          command += [ '--header', "#{key}: #{value}" ]
         end
       end
 
       if client.cookies?
         cookie_jar.preflight
-        command += ["--cookie", cookie_jar.path]
-        command += ["--cookie-jar", cookie_jar.path]
+        command += [ '--cookie', cookie_jar.path ]
+        command += [ '--cookie-jar', cookie_jar.path ]
       end
 
       # SSL options
-      command += ["--cacert", client.cacert] if client.cacert
-      command += ["--capath", client.capath] if client.capath
-      command += ["--insecure"] if client.insecure?
+      command += [ '--cacert', client.cacert ] if client.cacert
+      command += [ '--capath', client.capath ] if client.capath
+      command += [ '--insecure' ] if client.insecure?
 
-      command += ["--dump-header", headers_path]
-      command += ["--output", body_path]
+      command += [ '--dump-header', headers_path ]
+      command += [ '--output', body_path ]
 
       command << request.uri
 

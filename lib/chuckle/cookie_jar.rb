@@ -1,6 +1,6 @@
 module Chuckle
   class CookieJar
-    PATH = "/_chuckle_cookies.txt"
+    PATH = '/_chuckle_cookies.txt'.freeze
 
     def initialize(request)
       @request = request

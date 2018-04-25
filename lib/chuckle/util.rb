@@ -1,9 +1,9 @@
-require "digest/md5"
-require "tempfile"
+require 'digest/md5'
+require 'tempfile'
 
 module Chuckle
   module Util
-    extend self
+    module_function
 
     def hash_to_query(hash)
       q = hash.map do |key, value|
@@ -11,7 +11,7 @@ module Chuckle
         value = CGI.escape(value.to_s)
         "#{key}=#{value}"
       end
-      q.sort.join("&")
+      q.sort.join('&')
     end
 
     def md5(s)
@@ -23,7 +23,7 @@ module Chuckle
     end
 
     def tmp_path
-      Tempfile.open("chuckle") do |f|
+      Tempfile.open('chuckle') do |f|
         path = f.path
         f.unlink
         path

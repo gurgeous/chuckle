@@ -1,4 +1,4 @@
-require "fileutils"
+require 'fileutils'
 
 module Chuckle
   class Cache
@@ -21,7 +21,7 @@ module Chuckle
 
     def set(request, curl)
       # mkdirs
-      FileUtils.mkdir_p([File.dirname(request.headers_path), File.dirname(request.body_path)])
+      FileUtils.mkdir_p([ File.dirname(request.headers_path), File.dirname(request.body_path) ])
 
       # now mv
       FileUtils.mv(curl.headers_path, request.headers_path)
@@ -53,7 +53,7 @@ module Chuckle
 
       # calculate body_path
       s = @client.cache_dir
-      s = "#{s}/#{pathify(uri.host || "file")}"
+      s = "#{s}/#{pathify(uri.host || 'file')}"
       s = "#{s}/#{pathify(uri.path)}"
       if uri.query
         q = "?#{uri.query}"
@@ -76,15 +76,15 @@ module Chuckle
 
     # turn s into a string that can be a path
     def pathify(s)
-      s = s.gsub(/^\//, "")
-      s = s.gsub("..", ",")
-      s = s.gsub(/[?\/&]/, ",")
+      s = s.gsub(/^\//, '')
+      s = s.gsub('..', ',')
+      s = s.gsub(/[?\/&]/, ',')
       s = s.gsub(/[^A-Za-z0-9_.,=%-]/) do |i|
-        hex = i.unpack("H2").first
+        hex = i.unpack('H2').first
         "%#{hex}"
       end
       s = s.downcase
-      s = "_root_" if s.empty?
+      s = '_root_' if s.empty?
       s
     end
   end
