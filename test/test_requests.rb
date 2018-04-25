@@ -10,6 +10,13 @@ class TestRequests < Minitest::Test
     assert_equal "hello\n", response.body
   end
 
+  def test_http2_200
+    response = mcurl(HTTP2_200) { client.get(URL) }
+    assert_equal 200, response.code
+    assert_equal URI.parse(URL), response.uri
+    assert_equal "hello\n", response.body
+  end
+
   def test_302
     response = mcurl(HTTP_302) { client.get(URL) }
     assert_equal 200, response.code
