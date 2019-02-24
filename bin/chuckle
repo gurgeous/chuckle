@@ -4,7 +4,7 @@
 $VERBOSE = true
 
 require 'chuckle'
-require 'trollop'
+require 'optimist'
 
 class Main
   attr_accessor :options
@@ -33,7 +33,7 @@ end
 # parse command line
 #
 
-options = Trollop.options do
+options = Optimist::options do
   banner <<EOF
 Usage: chuckle <url_file>
 
@@ -45,6 +45,6 @@ EOF
   opt :timeout, 'Timeout per retry', type: Integer
 end
 
-Trollop.die 'need <url_file>' if ARGV.length != 1
+Optimist::die 'need <url_file>' if ARGV.length != 1
 options[:file] = ARGV.shift
 Main.new(options)
