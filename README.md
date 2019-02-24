@@ -60,9 +60,12 @@ Pass these `Chuckle::Client.new`:
 
 ## Changelog
 
-* 1.0.6 (May 15, 2015) - added support for setting arbitrary headers (@pattymac)
-* 1.0.5 (Jan 30, 2015) - added support for setting content type (@pattymac)
-* 1.0.4 (Dec 6, 2014) - added support for --cacert, --capath and --insecure (@nkriege)
+* 1.0.9 (Feb 2019_ - switch trollop to optimist. Perhaps we'll make it all the way to slop someday! (@jamezilla)
+* 1.0.8 - we mourn this lost version
+* 1.0.7 (Apr 2018) - HTTP2 fix and more rubies (@nkriege)
+* 1.0.6 (May 2015) - added support for setting arbitrary headers (@pattymac)
+* 1.0.5 (Jan 2015) - added support for setting content type (@pattymac)
+* 1.0.4 (Dec 2014) - added support for --cacert, --capath and --insecure (@nkriege)
 
 
 ## Limitations
