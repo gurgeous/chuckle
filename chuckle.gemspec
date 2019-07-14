@@ -13,8 +13,6 @@ Gem::Specification.new do |s|
   s.summary     = 'Chuckle - an http client that caches on disk.'
   s.description = 'An http client that caches on disk.'
 
-  s.rubyforge_project = 'chuckle'
-
   s.add_runtime_dependency 'optimist'
 
   s.add_development_dependency 'awesome_print'
